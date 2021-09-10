@@ -22,7 +22,15 @@ export default function Mainnav(props) {
       
       </Popover.Content>
     </Popover>
-  )
+  );
+
+  const Avatar = () => (
+    <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={userInfo}>
+    {({ ref, ...triggerHandler}) => (
+      <Image ref={ref} src={props.user.photoURL} roundedCircle style={{height: 50 + 'px'}} {...triggerHandler}/>
+    )}
+    </OverlayTrigger>
+  );
 
   return (
     <div>
@@ -30,16 +38,9 @@ export default function Mainnav(props) {
         <Container>
           <Navbar.Brand>REACT TODO</Navbar.Brand>
           <Navbar.Collapse className="justify-content-end">
-            {/* <Navbar.Text>
-              {props.user ? 'Logged in as: ' + props.user.displayName : ''}
-            </Navbar.Text> */}
             {props.user &&
               <div>
-                <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={userInfo}>
-                  <Image src={props.user.photoURL} roundedCircle style={{height: 50 + 'px'}}/>
-                </OverlayTrigger>
-                
-                {/* <Button variant="secondary" className="ms-2" onClick={logout}>Logout</Button> */}
+                <Avatar />
               </div>
             }
            
