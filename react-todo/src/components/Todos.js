@@ -1,9 +1,49 @@
-import React from 'react'
+import React, { Component } from 'react'
+import { Container, InputGroup, Button, FormControl } from 'react-bootstrap'
+import { getAuth } from "firebase/auth"
+import { getFirestore, collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { render } from 'react-dom';
 
-export default function Todos() {
-  return (
-    <div>
-      hello todos goes here
-    </div>
-  )
+const inputField = (
+  <InputGroup className="mb-3 mt-3">
+    <FormControl>
+    </FormControl>
+    <Button variant="primary">
+      Add
+    </Button>
+  </InputGroup>
+)
+
+export default class Todos extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {value: ''}
+  }
+
+  handleChange = (event) =>  {
+    this.setState({value: event.target.value})
+  }
+
+  handleAddTodo = (event) => {
+    this.setState({value: event.target.value})
+    console.log(this.state.value);
+    console.log(getAuth().currentUser.uid);
+  }
+  
+  render() {
+    return (
+      <Container className="d-flex align-items-center justify-content-center mt-5">
+        <div class="inputField">  
+           <InputGroup className="mb-3 mt-3">
+            <FormControl value={this.state.value} onChange={this.handleChange} type="text">
+            </FormControl>
+            <Button variant="primary" onClick={this.handleAddTodo} >
+              Add
+            </Button>
+          </InputGroup>
+        </div>
+      </Container>
+    )
+  }
+  
 }

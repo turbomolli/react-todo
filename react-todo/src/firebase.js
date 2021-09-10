@@ -1,6 +1,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { getFirestore, collection, doc, setDoc, getDoc } from "firebase/firestore";
 import { createContext, useContext, useState, useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -24,14 +25,45 @@ const firebaseConfig = {
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
 
-export function login2() {
+export function loginWithGoogle2() {
   console.log('click');
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider).then(res => {
     console.log(res);
+    const user = res.user;
+  }, err => {
+    console.log(err);
   });
 }
+
+export const loginWithGoogle = async () => {
+  const auth = getAuth();
+  const db = getFirestore();
+  const provider = new GoogleAuthProvider();
+
+  try {
+    const res = await signInWithPopup(auth, provider);
+    const user = res.user;
+    const docRef = doc(db, "users3", user.uid);
+    const docSnap = await getDoc(docRef);
+    
+    if (docSnap.exists()) {
+      console.log("Document data: ", docSnap.data());
+    } else {
+      console.log('new user');
+      const userRef = collection(db, "users3");
+      await setDoc(doc(userRef, user.uid), {
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+      });
+    }
+
+  } catch (err) {
+    console.log(err);
+  }
+} 
 
 export function logout() {
   const auth = getAuth();

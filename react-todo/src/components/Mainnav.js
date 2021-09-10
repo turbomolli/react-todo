@@ -1,5 +1,6 @@
 import React from 'react'
 import { Container, Navbar, Button, Image, Popover, OverlayTrigger, Row } from 'react-bootstrap'
+import { Route } from 'react-router';
 import { login2, logout } from "../firebase";
 
 export default function Mainnav(props) {
@@ -9,7 +10,9 @@ export default function Mainnav(props) {
       <Popover.Content>
         <Container>
           <Row>
-            {props?.user?.displayName}
+            <h6>{props?.user?.displayName}</h6>
+            <p>{props?.user?.email}</p>
+            <p>{props?.user?.uid}</p>
           </Row>
           <Row>
             <Button variant="secondary" className="ms-2" onClick={logout}>Logout</Button>
