@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Container, InputGroup, Button, FormControl, Row } from 'react-bootstrap'
+import { Container, InputGroup, Button, FormControl, Row, ListGroup } from 'react-bootstrap'
+import { FaBeer, FaTrashAlt } from 'react-icons/fa'
 import { getAuth } from "firebase/auth"
 import { getFirestore, collection, doc, setDoc, getDoc, addDoc, serverTimestamp, query, where, onSnapshot } from "firebase/firestore";
 
@@ -9,15 +10,32 @@ const TodosComponent = props => {
   
   return (
     <div>
-      <ul>
+      <ListGroup>
         {todos.map(todo => {
           return (
-            <li>{todo.todo}</li>
+           <TodoItemComponent todo={todo} />
           );
         })}
-      </ul>
+      </ListGroup>
     </div>
   );
+}
+
+const TodoItemComponent = props => {
+  const todo = props.todo
+
+  return (
+    <ListGroup.Item className="d-flex justify-content-between">
+      <div>
+       {todo.todo}
+      </div>
+      <div>
+        <Button className="me-2" variant="warning"><FaBeer /></Button>
+        <Button variant="danger"><FaTrashAlt /></Button>
+      </div>
+     
+    </ListGroup.Item>
+  )
 }
 
 export default class Todos extends Component {
@@ -94,20 +112,20 @@ export default class Todos extends Component {
     return (
       <Container className="align-items-center justify-content-center mt-5">
         <Row>
-        <div className="inputField">  
-           <InputGroup className="mb-3 mt-3">
-            <FormControl value={this.state.value} onChange={this.handleChange} type="text">
-            </FormControl>
-            <Button variant="primary" onClick={this.handleAddTodo} >
-              Add
-            </Button>
-          </InputGroup>
-        </div>
+          <div className="inputField">  
+            <InputGroup className="mb-3 mt-3">
+              <FormControl value={this.state.value} onChange={this.handleChange} type="text">
+              </FormControl>
+              <Button variant="primary" onClick={this.handleAddTodo} >
+                Add
+              </Button>
+            </InputGroup>
+          </div>
         </Row>
         <Row>
-        <div className="todos">
-          <TodosComponent todos={this.state.todos}/>
-        </div>
+          <div className="todos">
+            <TodosComponent todos={this.state.todos}/>
+          </div>
         </Row>
       </Container>
     )
