@@ -1,9 +1,8 @@
-import React, { Component } from 'react'
+import React, { Component, createContext, useContext } from 'react'
 import { Container, InputGroup, Button, FormControl, Row, ListGroup } from 'react-bootstrap'
-import { FaBeer, FaTrashAlt } from 'react-icons/fa'
+import { FaBeer, FaTrashAlt, FaCheck } from 'react-icons/fa'
 import { getAuth } from "firebase/auth"
-import { getFirestore, collection, doc, setDoc, getDoc, addDoc, serverTimestamp, query, where, onSnapshot } from "firebase/firestore";
-
+import { getFirestore, collection, doc, setDoc, getDoc, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "firebase/firestore";
 
 const TodosComponent = props => {
   const todos = props.todos;
@@ -13,7 +12,7 @@ const TodosComponent = props => {
       <ListGroup>
         {todos.map(todo => {
           return (
-           <TodoItemComponent todo={todo} />
+           <TodoItemComponent todo={todo} key={todo.id}/>
           );
         })}
       </ListGroup>
@@ -21,19 +20,72 @@ const TodosComponent = props => {
   );
 }
 
+const toggleImportant = async (todoId, important) => {
+  console.log('toggle: ', todoId);
+  const db = getFirestore();
+  const auth = getAuth();
+  const newImportant = !important;
+
+  try {
+    const todoRef = doc(db, "users3", auth.currentUser.uid, "todos", todoId);
+    await setDoc(todoRef, { important: newImportant }, { merge: true});
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+const toggleCompleted = async (todoId, completed) => {
+  const db = getFirestore();
+  const auth = getAuth();
+  const newCompleted = !completed;
+
+  try {
+    const todoRef = doc(db, "users3", auth.currentUser.uid, "todos", todoId);
+    await setDoc(todoRef, { completed: newCompleted }, { merge: true});
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 const TodoItemComponent = props => {
   const todo = props.todo
 
   return (
-    <ListGroup.Item className="d-flex justify-content-between">
-      <div>
+    <ListGroup.Item
+      className="d-flex justify-content-between align-items-center" 
+      variant={todo.important ? 'primary' : 'light'}
+    >
+      
+      <div style={{textDecoration: todo.completed ? 'line-through' : 'none'}}>
+        <Button
+          className="me-2"
+          variant={todo.completed ? 'success' : 'outline-success'}
+          onClick={() => toggleCompleted(todo.id, todo.completed)}
+        >
+          <FaCheck />
+        </Button>
        {todo.todo}
       </div>
+      
       <div>
-        <Button className="me-2" variant="warning"><FaBeer /></Button>
+        <Button
+          className="me-2"
+          variant={todo.important ? 'warning' : 'outline-warning'}
+          onClick={() => toggleImportant(todo.id, todo.important)}
+        >
+          <FaBeer />
+        </Button>
+
+        {/* <Button
+          className="me-2"
+          variant={todo.completed ? 'success' : 'outline-success'}
+          onClick={() => toggleCompleted(todo.id, todo.completed)}
+        >
+          <FaCheck />
+        </Button> */}
+
         <Button variant="danger"><FaTrashAlt /></Button>
       </div>
-     
     </ListGroup.Item>
   )
 }
@@ -43,7 +95,8 @@ export default class Todos extends Component {
     super(props);
     this.state = {
       value: '',
-      todos: []
+      todos: [],
+      order: 'important'
     }
   }
 
@@ -73,14 +126,16 @@ export default class Todos extends Component {
   }
 
   getTodos = async () => {
-    console.log('getting todos');
+    const order = this.state.order;
+    console.log('getting todos, oderd by: ' + order);
     const db = getFirestore();
-    const q = query(collection(db, "users3", getAuth().currentUser.uid, "todos" ));
+    const q = query(collection(db, "users3", getAuth().currentUser.uid, "todos" ), orderBy("completed", "asc"), orderBy(order, "desc"));
     this.unsubscribe = onSnapshot(q, (querySnapshot) => {
       const todos = [];
       querySnapshot.forEach((doc) => {
         //console.log(doc.data());
-        todos.push(doc.data());
+        const id = doc.id;
+        todos.push({id, ...doc.data()});
       });
       console.log("todos: ", todos);
       this.setState({ todos });
@@ -88,11 +143,8 @@ export default class Todos extends Component {
   }
 
   addTodo = async (userId, todo) => {
-    console.log(userId);
-    console.log(todo);
-
+  
     const db = getFirestore();
-    //const todoRef = doc(db, "users3", userId, "todos");
     const todoData = {
       todo: todo,
       completed: false,
@@ -106,6 +158,10 @@ export default class Todos extends Component {
     } catch (err) {
       console.log(err);
     } 
+  }
+
+  handleToggleImportant = async (todoId) => {
+    console.log(todoId);
   }
   
   render() {

@@ -26,7 +26,7 @@ export default function Mainnav(props) {
 
   const Avatar = () => (
     <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={userInfo}>   
-      <Image src={props.user.photoURL} roundedCircle style={{height: 50 + 'px'}}/>
+      <Image className="avatar" src={props.user.photoURL} roundedCircle style={{height: 50 + 'px'}}/>
     </OverlayTrigger>
   );
 

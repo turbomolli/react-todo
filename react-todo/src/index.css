@@ -12,6 +12,6 @@ code {
     monospace;
 }
 
-.inputField {
-  width: 400px;
+.avatar {
+  cursor: pointer;
 }
