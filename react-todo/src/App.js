@@ -5,7 +5,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import logo from './logo.svg';
 import './App.css';
 import Login from './components/Login';
-import Todos from './components/Todos';
+import Todos from './components/todos/Todos';
 import Mainnav from './components/Mainnav';
 
 
