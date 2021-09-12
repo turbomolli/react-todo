@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
@@ -13,24 +13,25 @@ function App() {
 
   const [user, loading, error] = useAuthState(getAuth());
 
-  console.log(user?.displayName);
   console.log(loading);
+  console.log(user?.displayName);
+  
 
   let route;
   if (user) {
     route = <Route exact path="/" component={Todos} />
-  } else {
+  } else if (!loading) {
     route = <Route exact path="/" component={Login} />
   }
 
   return (
     <div className="App">
-    <Mainnav user={user}/>
-    <Router>
-      <Switch>
-        {route}
-      </Switch>
-    </Router>
+      <Mainnav user={user}/>
+      <Router>
+        <Switch>
+          {route}
+        </Switch>
+      </Router>
     </div>
   );
 }

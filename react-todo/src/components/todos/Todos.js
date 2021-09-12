@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Container, InputGroup, Button, FormControl, Row, ListGroup } from 'react-bootstrap'
+import { Container, InputGroup, Button, FormControl, Row, Spinner, ProgressBar } from 'react-bootstrap'
 import { getAuth } from "firebase/auth"
 import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "firebase/firestore";
+import { FaPlus } from 'react-icons/fa';
 import TodosComponent from './TodosList';
 
 
@@ -11,7 +12,8 @@ export default class Todos extends Component {
     this.state = {
       value: '',
       todos: [],
-      order: 'important'
+      order: 'important',
+      loading: false
     }
   }
 
@@ -42,18 +44,20 @@ export default class Todos extends Component {
 
   getTodos = async () => {
     const order = this.state.order;
+    this.setState({ loading: true });
     console.log('getting todos, oderd by: ' + order);
     const db = getFirestore();
-    const q = query(collection(db, 'users3', getAuth().currentUser.uid, 'todos' ), orderBy('completed', 'asc'), orderBy(order, 'desc'));
+    const q = query(collection(db, 'users3', getAuth().currentUser.uid, 'todos' ), orderBy(order, 'desc'));
     this.unsubscribe = onSnapshot(q, (querySnapshot) => {
       const todos = [];
       querySnapshot.forEach((doc) => {
-        //console.log(doc.data());
         const id = doc.id;
         todos.push({id, ...doc.data()});
       });
       console.log("todos: ", todos);
       this.setState({ todos });
+      this.setState({ loading: false });
+
     })
   }
 
@@ -81,17 +85,22 @@ export default class Todos extends Component {
   
   render() {
     return (
-      <Container className="align-items-center justify-content-center mt-5">
+      <Container className="align-items-center justify-content-center mt-4">
         <Row>
           <div className="inputField">  
             <InputGroup className="mb-3 mt-3">
               <FormControl value={this.state.value} onChange={this.handleChange} type="text">
               </FormControl>
               <Button variant="primary" onClick={this.handleAddTodo} >
-                Add
+                <FaPlus />
               </Button>
             </InputGroup>
           </div>
+        </Row>
+        <Row>
+          {this.state.loading &&
+            <ProgressBar animated now={100} />
+          }
         </Row>
         <Row>
           <div className="todos">

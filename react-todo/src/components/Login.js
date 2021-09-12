@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, Button } from "react-bootstrap";
-import { loginWithGoogle, logout } from "../firebase";
+import { loginWithGoogle } from "../firebase";
 
 function Login() {
   return (

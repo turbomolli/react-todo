@@ -1,7 +1,6 @@
 import React from 'react'
 import { Container, Navbar, Button, Image, Popover, OverlayTrigger, Row } from 'react-bootstrap'
-import { Route } from 'react-router';
-import { login2, logout } from "../firebase";
+import { logout } from "../firebase";
 
 export default function Mainnav(props) {
 
@@ -25,6 +24,7 @@ export default function Mainnav(props) {
   );
 
   const Avatar = () => (
+    // This causes some warnings.
     <OverlayTrigger trigger="click" rootClose placement="bottom" overlay={userInfo}>   
       <Image className="avatar" src={props.user.photoURL} roundedCircle style={{height: 50 + 'px'}}/>
     </OverlayTrigger>
@@ -41,7 +41,6 @@ export default function Mainnav(props) {
                 <Avatar />
               </div>
             }
-           
           </Navbar.Collapse>
         </Container>
       </Navbar>
