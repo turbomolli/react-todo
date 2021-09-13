@@ -5,7 +5,6 @@ import { getAuth } from "firebase/auth"
 import { getFirestore, doc, setDoc, deleteDoc } from "firebase/firestore";
 
 const toggleImportant = async (todoId, important) => {
-  console.log('toggle: ', todoId);
   const db = getFirestore();
   const auth = getAuth();
   const newImportant = !important;
@@ -32,7 +31,6 @@ const toggleCompleted = async (todoId, completed) => {
 }
 
 const deleteTodo = async (todoId) => {
-  console.log("delete", todoId);
   const db = getFirestore();
   const auth = getAuth();
   try {

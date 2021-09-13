@@ -11,7 +11,6 @@ export default function Mainnav(props) {
           <Row>
             <h6>{props?.user?.displayName}</h6>
             <p>{props?.user?.email}</p>
-            <p>{props?.user?.uid}</p>
           </Row>
           <Row>
             <Button variant="secondary" className="ms-2" onClick={logout}>Logout</Button>

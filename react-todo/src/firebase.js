@@ -1,6 +1,6 @@
 
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth"
 import { getFirestore, collection, doc, setDoc, getDoc } from "firebase/firestore";
 
 
@@ -23,18 +23,6 @@ const firebaseConfig = {
 // Initialize Firebase
 export const firebaseApp = initializeApp(firebaseConfig);
 
-export function loginWithGoogle2() {
-  console.log('click');
-  const auth = getAuth();
-  const provider = new GoogleAuthProvider();
-  signInWithPopup(auth, provider).then(res => {
-    console.log(res);
-    const user = res.user;
-  }, err => {
-    console.log(err);
-  });
-}
-
 export const loginWithGoogle = async () => {
   const auth = getAuth();
   const db = getFirestore();
@@ -47,9 +35,9 @@ export const loginWithGoogle = async () => {
     const docSnap = await getDoc(docRef);
     
     if (docSnap.exists()) {
-      console.log("Document data: ", docSnap.data());
+      // console.log("Document data: ", docSnap.data());
+      // could save user but we get what we need from getAuth() anyway
     } else {
-      console.log('new user');
       const userRef = collection(db, "users3");
       await setDoc(doc(userRef, user.uid), {
         uid: user.uid,

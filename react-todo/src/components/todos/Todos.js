@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Container, InputGroup, Button, FormControl, Row, Spinner, ProgressBar } from 'react-bootstrap'
+import { Container, InputGroup, Button, FormControl, Row, ProgressBar } from 'react-bootstrap'
 import { getAuth } from "firebase/auth"
 import { getFirestore, collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from "firebase/firestore";
 import { FaPlus } from 'react-icons/fa';
@@ -33,7 +33,6 @@ export default class Todos extends Component {
     this.setState({value: event.target.value})
 
     if (this.state.value.length > 2) {
-      
       const todo = this.state.value;
       const userId = getAuth().currentUser.uid;
       this.addTodo(userId, todo);
@@ -45,16 +44,14 @@ export default class Todos extends Component {
   getTodos = async () => {
     const order = this.state.order;
     this.setState({ loading: true });
-    console.log('getting todos, oderd by: ' + order);
     const db = getFirestore();
-    const q = query(collection(db, 'users3', getAuth().currentUser.uid, 'todos' ), orderBy(order, 'desc'));
+    const q = query(collection(db, 'users3', getAuth().currentUser.uid, 'todos' ), orderBy(order, 'desc'), orderBy('createdAt', 'desc'));
     this.unsubscribe = onSnapshot(q, (querySnapshot) => {
       const todos = [];
       querySnapshot.forEach((doc) => {
         const id = doc.id;
         todos.push({id, ...doc.data()});
       });
-      console.log("todos: ", todos);
       this.setState({ todos });
       this.setState({ loading: false });
 
@@ -62,14 +59,12 @@ export default class Todos extends Component {
   }
 
   addTodo = async (userId, todo) => {
-  
     const db = getFirestore();
     const todoData = {
       todo: todo,
       completed: false,
       important: false,
       createdAt: serverTimestamp(),
-
     }
     try {
       const docRef = await addDoc(collection(db, 'users3', userId, 'todos'), todoData);
@@ -82,6 +77,7 @@ export default class Todos extends Component {
   handleToggleImportant = async (todoId) => {
     console.log(todoId);
   }
+
   
   render() {
     return (

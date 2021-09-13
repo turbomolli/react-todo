@@ -8,7 +8,6 @@ function Login() {
       <Card style={{ width: '18rem' }}>
         <Card.Body className="w-100 text-center">
           <Button variant="primary" onClick={loginWithGoogle}> Login with Google</Button>
-          {/* <Button variant="secondary" className="ml-2" onClick={logout}>Logout</Button> */}
         </Card.Body>
       </Card>
     </div>
